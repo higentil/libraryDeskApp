@@ -1,0 +1,18 @@
+# Eclipse metadata and configuration
+.metadata/
+.classpath
+.project
+.settings/
+.recommenders/
+
+# Compiled Java architecture outputs
+bin/
+*.class
+
+# Logs and runtime artifacts
+*.log
+tmp/
+
+# OS files
+.DS_Store
+Thumbs.db
