@@ -1,18 +1,20 @@
 package controller;
 
 
-import model.BookDOA;
+import model.BookDAO;
 import view.AppWindow;
 import java.util.Comparator;
 import model.Book;
+import javax.swing.JOptionPane;
+import java.util.ArrayList;
 
 // Integration Layer
 public class BookController {
 
-	private final BookDOA model;
+	private final BookDAO model;
 	private final AppWindow view;
 
-	public BookController(BookDOA model, AppWindow view) {
+	public BookController(BookDAO model, AppWindow view) {
 
 		this.model = model;
 		this.view = view;
@@ -36,9 +38,15 @@ public class BookController {
 			refreshTableView();
 		} else {
 			Book found = model.search(query);
+			
+			java.util.List<Book> searchResult = new ArrayList<>();
+			
+			if (found != null) {
+				searchResult.add(found);
+			}
 
 			//Give JTable a list containing the single match, or an empty list if nothing found
-			view.getTableModel().setBooks(found != null ? java.util.List.of(found) : java.util.List.of());
+			view.getTableModel().setBooks(searchResult);
 		}
 	}
 
@@ -48,7 +56,7 @@ public class BookController {
 
 		//Automatic sorting method
 		Comparator<Book> comp = view.getSelectedSort().equals("Authors") ?
-				Comparator.comparing(Book::authors) : Comparator.comparingInt(Book::year);
+				Comparator.comparing(Book::authors, String.CASE_INSENSITIVE_ORDER) : Comparator.comparingInt(Book::year);
 
 		//Modify backend array order state
 		model.sort(comp, asc);
@@ -62,12 +70,14 @@ public class BookController {
 		//Switch methods based on radio toggle settings
 		if(view.isArrayListSelected()) model.useArrayList();
 		else model.useLinkedList();
+		
 		refreshTableView();
 	}
 
+	
 	private void refreshTableView() {
 
 		//Switch original state from model layer to presentation model
-		view.getTableModel().setBooks(model.getAllBooks());
+		view.getTableModel().setBooks(model.getTopBooks());
 	}
 }

@@ -5,22 +5,31 @@ import javax.swing.SwingUtilities;
 
 public class MainApp {
 	public static void main(String[] args) {
+		
+		// Initialize the Book Data Engine instance
+		BookDAO model = new BookDataEngine();
+
+		
 		SwingUtilities.invokeLater(() -> {
-
-			// Initialize the Book Data Engine instance
-			BookDOA model = new BookDataEngine();
-
-			//Pre-load the dataset
-			model.loadCSV("data/books.csv");
 
 			//App UI layout 
 			AppWindow view = new AppWindow();
 
 			//Initialize App Controller 
 			new BookController(model, view);
-
+			
 			//Display the App Main Window
 			view.setVisible(true);
+			
+			new Thread(() -> {
+				model.loadCSV("data/books.csv");
+				
+				SwingUtilities.invokeLater(() -> {
+					if (view.isArrayListSelected()) model.useArrayList();
+					else model.useLinkedList();
+					view.getTableModel().setBooks(model.getTopBooks());
+				});
+			}).start();
 		});
 	}
 }
