@@ -25,9 +25,10 @@ public class AppWindow extends JFrame {
 
 		//Top Bar UI
 		JPanel northPanel = new JPanel();
-		northPanel.add(new JLabel("Query:"));
+		northPanel.add(new JLabel("Find Books:"));
 		northPanel.add(searchField);
 		northPanel.add(searchButton);
+		northPanel.add(new JLabel("Sort by:"));
 		northPanel.add(sortDropdown);
 		northPanel.add(descCheckbox);
 
@@ -38,7 +39,12 @@ public class AppWindow extends JFrame {
 
 		//Components positions UI
 		add(northPanel, BorderLayout.NORTH);
-		add(new JScrollPane(new JTable(tableModel)), BorderLayout.CENTER);
+		
+		JTable table = new JTable(tableModel);
+		table.setFillsViewportHeight(true);
+		add(new JScrollPane(table), BorderLayout.CENTER);
+		
+		setLocationRelativeTo(null);
 	}
 
 	//App Getters UI
@@ -49,7 +55,7 @@ public class AppWindow extends JFrame {
 	public boolean isArrayListSelected() { return arrayRadio.isSelected(); }
 
 	//Listeners UI
-	public void addSearchListener(ActionListener l) { searchButton.addActionListener(l); }
+	public void addSearchListener(ActionListener l) { searchButton.addActionListener(l); searchField.addActionListener(l); }
 	public void addSortListener(ActionListener l) { sortDropdown.addActionListener(l); descCheckbox.addActionListener(l); }
 	public void addStorageToggleListener(ActionListener l) { arrayRadio.addActionListener(l); linkedRadio.addActionListener(l); }
 }
