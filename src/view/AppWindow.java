@@ -22,7 +22,6 @@ public class AppWindow extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 
-
 		//Top Bar UI
 		JPanel northPanel = new JPanel();
 		northPanel.add(new JLabel("Find Books:"));
@@ -34,16 +33,18 @@ public class AppWindow extends JFrame {
 
 		// Link radio buttons UI
 		ButtonGroup group = new ButtonGroup();
-		group.add(arrayRadio); group.add(linkedRadio);
-		northPanel.add(arrayRadio); northPanel.add(linkedRadio);
+		group.add(arrayRadio);
+		group.add(linkedRadio);
+		northPanel.add(arrayRadio);
+		northPanel.add(linkedRadio);
 
 		//Components positions UI
 		add(northPanel, BorderLayout.NORTH);
-		
+
 		JTable table = new JTable(tableModel);
 		table.setFillsViewportHeight(true);
 		add(new JScrollPane(table), BorderLayout.CENTER);
-		
+
 		setLocationRelativeTo(null);
 	}
 
@@ -55,32 +56,63 @@ public class AppWindow extends JFrame {
 	public boolean isArrayListSelected() { return arrayRadio.isSelected(); }
 
 	//Listeners UI
-	public void addSearchListener(ActionListener l) { searchButton.addActionListener(l); searchField.addActionListener(l); }
-	public void addSortListener(ActionListener l) { sortDropdown.addActionListener(l); descCheckbox.addActionListener(l); }
-	public void addStorageToggleListener(ActionListener l) { arrayRadio.addActionListener(l); linkedRadio.addActionListener(l); }
-	
+	public void addSearchListener(ActionListener l) {
+		searchButton.addActionListener(l);
+		searchField.addActionListener(l);
+	}
+
+	public void addSortListener(ActionListener l) {
+		sortDropdown.addActionListener(l);
+		descCheckbox.addActionListener(l);
+	}
+
+	public void addStorageToggleListener(ActionListener l) {
+		arrayRadio.addActionListener(l);
+		linkedRadio.addActionListener(l);
+	}
+
 	// Delete button UI
 	private JButton deleteButton;
-	
+
 	public void addDeleteOption(ActionListener deletionListener) {
-		
+
 		this.deleteButton = new JButton("Delete Book");
 		this.deleteButton.setBackground(new java.awt.Color(220, 53, 69));
 		this.deleteButton.setForeground(java.awt.Color.WHITE);
 		this.deleteButton.addActionListener(deletionListener);
-		
+
 		for (java.awt.Component comp : getContentPane().getComponents()) {
-			
 			if (comp instanceof JPanel) {
-				
 				JPanel northPanel = (JPanel) comp;
 				northPanel.add(deleteButton);
 				break;
 			}
 		}
-		
+
+		revalidate();
+		repaint();
+	}
+
+	//Add Book button UI
+	private JButton addBookButton;
+
+	public void addAddBookOption(ActionListener addListener) {
+
+		this.addBookButton = new JButton("Add Book");
+		this.addBookButton.setBackground(new java.awt.Color(40, 167, 69)); // green
+		this.addBookButton.setForeground(Color.WHITE);
+		this.addBookButton.addActionListener(addListener);
+
+		// EXACT same pattern as delete button — added at bottom, no movement
+		for (java.awt.Component comp : getContentPane().getComponents()) {
+			if (comp instanceof JPanel) {
+				JPanel northPanel = (JPanel) comp;
+				northPanel.add(addBookButton);
+				break;
+			}
+		}
+
 		revalidate();
 		repaint();
 	}
 }
-

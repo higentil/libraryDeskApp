@@ -71,7 +71,6 @@ public class BookDataEngine implements BookDAO{
 						arrayStorage.add(book);
 						linkedStorage.add(book);
 					} catch (NumberFormatException nfe) {
-						// Skip malformed records silently to keep execution flow clean
 						continue;
 					}
 				}
@@ -82,35 +81,23 @@ public class BookDataEngine implements BookDAO{
 	}
 
 	@Override public void useArrayList() {
-		//Switch to ArrayList
 		this.activeList = arrayStorage;
-
-		// Sort ArrayList for binary search***
 		arrayStorage.sort(Comparator.comparingInt(Book::id));
 	}
 
 	@Override public void useLinkedList() {
-
-		// Switch to LinkedList
 		this.activeList = linkedStorage;
 	}
 
 	@Override public List<Book> getTopBooks() {
-
 		int end = Math.min(10, activeList.size());
-		//Returns the first n books
 		return new ArrayList<>(activeList.subList(0, end));
-
 	}
 
 	@Override public List<Book> getAllBooks() {
-
-		//Returns active data list
 		return activeList;
-
 	}
 
-		// Binary Search for ArrayList**
 	private Book binarySearchById(List<Book> list, int targetId) {
 		int low = 0;
 		int high = list.size() - 1;
@@ -119,18 +106,13 @@ public class BookDataEngine implements BookDAO{
 			int mid = (low + high) / 2;
 			Book midBook = list.get(mid);
 
-			if (midBook.id() == targetId) {
-				return midBook;
-			} else if (midBook.id() < targetId) {
-				low = mid + 1;
-			} else {
-				high = mid - 1;
-			}
+			if (midBook.id() == targetId) return midBook;
+			else if (midBook.id() < targetId) low = mid + 1;
+			else high = mid - 1;
 		}
 		return null;
 	}
 
-	// Linear Search for LinkedList**
 	private Book linearSearch(String query) {
 		for (Book book : activeList) {
 			if (String.valueOf(book.id()).equals(query)
@@ -142,76 +124,60 @@ public class BookDataEngine implements BookDAO{
 	}
 
 	@Override public Book search(String query) {
-
-		//Scan activeList for matching ID or ISBN
-		if (query == null || query.isBlank()) {
-			return null;
-		}
+		if (query == null || query.isBlank()) return null;
 
 		String clean = query.trim();
 
-		// Binary search when using ArrayList**
 		if (activeList == arrayStorage) {
 			try {
 				int id = Integer.parseInt(clean);
 				return binarySearchById(activeList, id);
 			} catch (NumberFormatException e) {
-				return linearSearch(clean); // fallback for ISBN
+				return linearSearch(clean);
 			}
 		}
 
-		// Linear search when using LinkedList
 		return linearSearch(clean);
 	}
 
 	@Override public void sort(Comparator<Book> comp, boolean asc) {
-
-		//Sort activeList
 		Comparator<Book> strictComp = asc ? comp : comp.reversed();
-
 		activeList.sort(strictComp);
-
 	}
-	
+
 	// Deleting feature
-	
 	@Override public boolean deleteBookById(int id) {
-		
 		Book targetBk = this.search(String.valueOf(id));
-		
+
 		if (targetBk == null) {
-			
 			return false;
 		}
-		
+
 		boolean removedFromArray = arrayStorage.remove(targetBk);
 		boolean removedFromLinked = linkedStorage.remove(targetBk);
-		
+
 		return removedFromArray || removedFromLinked;
-		
-		
-		
+	}
+
+	//// ⭐ ADDED ⭐ — Add Book feature
+	@Override
+	public void addBook(Book book) {
+		arrayStorage.add(book);
+		linkedStorage.add(book);
 	}
 
 	// Performance Test**
 	public void testSearchPerformance() {
 
-		// Warm-up phase (JVM optimization)
 		for (int i = 0; i < 2000; i++) {
-			search("1"); // arbitrary warm-up search
+			search("1");
 		}
 
-		// Collect all IDs from the dataset
 		List<Integer> ids = new ArrayList<>();
-		for (Book b : arrayStorage) {
-			ids.add(b.id());
-		}
+		for (Book b : arrayStorage) ids.add(b.id());
 
-		// Collect all ISBNs
 		List<String> isbns = new ArrayList<>();
-		for (Book b : arrayStorage) {
-			isbns.add(b.isbn());
-		}
+		for (Book b : arrayStorage) isbns.add(b.isbn());
 
 		Random rand = new Random();
 
@@ -220,20 +186,17 @@ public class BookDataEngine implements BookDAO{
 		long linkedIdTotal = 0;
 		long isbnTotal = 0;
 
-		// Test ID search (binary vs linear)
 		for (int i = 0; i < trials; i++) {
 
 			int randomId = ids.get(rand.nextInt(ids.size()));
 			String idQuery = String.valueOf(randomId);
 
-			// ArrayList → binary search
 			useArrayList();
 			long startArray = System.nanoTime();
 			search(idQuery);
 			long endArray = System.nanoTime();
 			arrayIdTotal += (endArray - startArray);
 
-			// LinkedList → linear search
 			useLinkedList();
 			long startLinked = System.nanoTime();
 			search(idQuery);
@@ -241,12 +204,10 @@ public class BookDataEngine implements BookDAO{
 			linkedIdTotal += (endLinked - startLinked);
 		}
 
-			// Test ISBN search (linear only)
 		for (int i = 0; i < trials; i++) {
 
 			String randomIsbn = isbns.get(rand.nextInt(isbns.size()));
 
-			// ISBN search is always linear
 			useArrayList();
 			long startIsbn = System.nanoTime();
 			search(randomIsbn);
@@ -254,11 +215,9 @@ public class BookDataEngine implements BookDAO{
 			isbnTotal += (endIsbn - startIsbn);
 		}
 
-		// Print results
 		System.out.println("===== PERFORMANCE RESULTS =====");
 		System.out.println("Trials: " + trials);
 		System.out.println();
-
 		System.out.println("ArrayList (binary search, ID): " + (arrayIdTotal / trials) + " ns avg");
 		System.out.println("LinkedList (linear search, ID): " + (linkedIdTotal / trials) + " ns avg");
 		System.out.println("Linear search (ISBN): " + (isbnTotal / trials) + " ns avg");
