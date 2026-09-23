@@ -172,6 +172,26 @@ public class BookDataEngine implements BookDAO{
 		activeList.sort(strictComp);
 
 	}
+	
+	// Deleting feature
+	
+	@Override public boolean deleteBookById(int id) {
+		
+		Book targetBk = this.search(String.valueOf(id));
+		
+		if (targetBk == null) {
+			
+			return false;
+		}
+		
+		boolean removedFromArray = arrayStorage.remove(targetBk);
+		boolean removedFromLinked = linkedStorage.remove(targetBk);
+		
+		return removedFromArray || removedFromLinked;
+		
+		
+		
+	}
 
 	// Performance Test**
 	public void testSearchPerformance() {

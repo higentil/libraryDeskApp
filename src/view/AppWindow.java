@@ -58,5 +58,29 @@ public class AppWindow extends JFrame {
 	public void addSearchListener(ActionListener l) { searchButton.addActionListener(l); searchField.addActionListener(l); }
 	public void addSortListener(ActionListener l) { sortDropdown.addActionListener(l); descCheckbox.addActionListener(l); }
 	public void addStorageToggleListener(ActionListener l) { arrayRadio.addActionListener(l); linkedRadio.addActionListener(l); }
+	
+	// Delete button UI
+	private JButton deleteButton;
+	
+	public void addDeleteOption(ActionListener deletionListener) {
+		
+		this.deleteButton = new JButton("Delete Book");
+		this.deleteButton.setBackground(new java.awt.Color(220, 53, 69));
+		this.deleteButton.setForeground(java.awt.Color.WHITE);
+		this.deleteButton.addActionListener(deletionListener);
+		
+		for (java.awt.Component comp : getContentPane().getComponents()) {
+			
+			if (comp instanceof JPanel) {
+				
+				JPanel northPanel = (JPanel) comp;
+				northPanel.add(deleteButton);
+				break;
+			}
+		}
+		
+		revalidate();
+		repaint();
+	}
 }
 
