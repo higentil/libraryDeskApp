@@ -13,4 +13,7 @@ public interface BookDAO {
 	List<Book> getAllBooks();
 	Book search(String query);
 	void sort(Comparator<Book> comparator, boolean ascending);
+	boolean deleteBookById(int id);
+	void addBook(Book book);
 }
+

@@ -24,7 +24,7 @@ public class BookController {
 		this.view.addSortListener(e -> handleBookSort());
 		this.view.addStorageToggleListener(e -> handleStorageToggle());
 
-		// Baseline for data rendering after launch 
+		// Baseline for data rendering after launch
 		refreshTableView();
 	}
 
@@ -38,9 +38,9 @@ public class BookController {
 			refreshTableView();
 		} else {
 			Book found = model.search(query);
-			
+
 			java.util.List<Book> searchResult = new ArrayList<>();
-			
+
 			if (found != null) {
 				searchResult.add(found);
 			}
@@ -70,11 +70,11 @@ public class BookController {
 		//Switch methods based on radio toggle settings
 		if(view.isArrayListSelected()) model.useArrayList();
 		else model.useLinkedList();
-		
+
 		refreshTableView();
 	}
 
-	
+
 	private void refreshTableView() {
 
 		//Switch original state from model layer to presentation model

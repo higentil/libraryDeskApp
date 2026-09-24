@@ -11,5 +11,4 @@ public record Book(
 		String title,
 		double rating
 
-		) {}
-
+) {}

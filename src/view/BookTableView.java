@@ -28,13 +28,13 @@ public class BookTableView extends AbstractTableModel {
 
 		return switch(col) {
 
-		case 0 -> bk.id();
-		case 1 -> bk.isbn();
-		case 2 -> bk.authors();
-		case 3 -> bk.year();
-		case 4 -> bk.title();
-		case 5 -> bk.rating();
-		default -> null;
+			case 0 -> bk.id();
+			case 1 -> bk.isbn();
+			case 2 -> bk.authors();
+			case 3 -> bk.year();
+			case 4 -> bk.title();
+			case 5 -> bk.rating();
+			default -> null;
 
 		};
 	}
